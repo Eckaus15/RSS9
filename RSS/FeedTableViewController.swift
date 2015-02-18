@@ -323,7 +323,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         ////////////////////////////////////////////////////////////////////////////////////
         let selectedFavorite = UIImage(named: "GoldStar") as UIImage!
         let notFavorite = UIImage(named: "FavoriteStar") as UIImage!
-        
+        let favURL: String = feeds[indexPath.row].objectForKey("link") as String
         var myFav = myTitle
         let fetchRequestTwo = NSFetchRequest(entityName:"Favorite")
         var favNames: [String] = []
@@ -331,10 +331,10 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             favNames = favs.map { $0.favoriteLinks }
         }
         if contains(favNames, myFav){
-            println("true")
+          //  println("true")
             cell.favorite.setImage(selectedFavorite, forState: .Normal)
         }else{
-            println("False")
+          //  println("False")
             cell.favorite.setImage(notFavorite, forState: .Normal)
         }
 
