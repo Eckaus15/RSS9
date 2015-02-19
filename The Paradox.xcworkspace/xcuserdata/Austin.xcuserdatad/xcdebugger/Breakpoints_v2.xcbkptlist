@@ -10,13 +10,18 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RSS/SideBarTableViewController.swift"
-            timestampString = "445913584.842279"
+            timestampString = "446001657.487965"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< Updated upstream
             startingLineNumber = "91"
             endingLineNumber = "91"
             landmarkName = "SideBarTableViewController"
             landmarkType = "3">
+=======
+            startingLineNumber = "98"
+            endingLineNumber = "98">
+>>>>>>> Stashed changes
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

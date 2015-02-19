@@ -21,7 +21,7 @@ class SideBarTableViewController: UITableViewController {
     
     
     // MARK: - Table view data source
-    
+ 
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         
         return 1
@@ -68,6 +68,7 @@ class SideBarTableViewController: UITableViewController {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         delegate?.sideBarControlDidSelectRow(indexPath)
+        self.tableView.deselectRowAtIndexPath(indexPath, animated: false)
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
@@ -78,14 +79,19 @@ class SideBarTableViewController: UITableViewController {
         }
     }
      override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
- 
-        
         
         if (editingStyle == UITableViewCellEditingStyle.Delete) {
-          
-        
-        
+            
+            let moc = SwiftCoreDataHelper.managedObjectContext()
+            if let results = SwiftCoreDataHelper.fetchEntities(NSStringFromClass(Feed), withPredicate: nil, managedObjectContext: moc) as? [Feed]{
+            let logItemToDelete = results[indexPath.row - 3] as NSManagedObject
+            moc.deleteObject(logItemToDelete)
+            tableData.removeAtIndex(indexPath.row)
+            tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+            SwiftCoreDataHelper.saveManagedObjectContext(moc)
+            }
+            
+            
         }
-}
-    
+    }
 }

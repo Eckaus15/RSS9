@@ -13,30 +13,6 @@
          3 Add All feeds option
          4 Add number of how many unread articles are there
 
-
-      Notes2:
-          So I plan on getting the Fav option done by just giving core data the list of links
-        and those links can just go into the load(selectedFURL) individually
-
-        For the All Feeds option its going to yeah idk yet
-
-        Actually deleting unwanted feeds is getting moved down to LAST priority
-
-
-        number of unread articles should be interesting... Take (feeds.count - readFeeds.count) 
-        readfeeds.count needs to be an element of the array feeds and should just be a number that
-        increases everytime a new check mark is made. Actually nvm you need to use core data so make
-        core data for feeds.count to update everytime a feed is loaded and just have another one to be
-        the variable for that feed
-
-
-        Do I actually want it to open to a blank feed first instead of simply offering them one? Maybe a
-        picture on the screen that is moving that says slide left to add a new feed or open feeds sidebar
-        that would be cool, I just need some way to show that the sidebar is there even some sidebars include a small
-        "handle" to pull them out. Other ways would just be an interactive thing telling them to when they are not moving
-        into new cells or reading a feed.. How does one do a timer in swift? 
-
-
 */
 import UIKit
 import CoreData
@@ -57,6 +33,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
     var currentFeedLink = String()
     var holdinglink = String()
 
+
     
  
     
@@ -76,11 +53,9 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
     
     func request(urlString:String?){
         
-        //Go to given url (Use this for feeds in favorite)
-        
         
         if urlString == nil{
-            
+
             let url = NSURL(string: "http://feeds.nytimes.com/nyt/rss/Technology")
             self.title = "New York Times Technology"
             feeds = []
@@ -90,6 +65,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             parser.shouldReportNamespacePrefixes = true
             parser.shouldResolveExternalEntities = true
             parser.parse()
+            
         }else{
             var errorlink = holdinglink
             let url = NSURL(string: urlString!)
@@ -101,7 +77,6 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             parser.shouldReportNamespacePrefixes = true
             parser.shouldResolveExternalEntities = true
             parser.parse()
-            
             
             if feeds == []{
                 println("error")
