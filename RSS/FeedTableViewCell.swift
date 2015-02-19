@@ -13,6 +13,7 @@ var logItems = NSManagedObject()
 
 class FeedTableViewCell: UITableViewCell {
     
+    @IBOutlet weak var link: UILabel!
     @IBOutlet weak var subtext: UILabel!
     @IBOutlet weak var title: UILabel!
     @IBOutlet weak var favorite: UIButton!
@@ -22,6 +23,8 @@ class FeedTableViewCell: UITableViewCell {
         let notFavorite = UIImage(named: "FavoriteStar") as UIImage!
         //sets up core data into array
         var myFav = title.text!
+        var myDesc = subtext.text!
+        var myLink = link.text!
         println(myFav)
         let moc = SwiftCoreDataHelper.managedObjectContext()
         //print out core data
@@ -30,12 +33,12 @@ class FeedTableViewCell: UITableViewCell {
         let fetchRequest = NSFetchRequest(entityName:"Favorite")
         let sortDescriptor = NSSortDescriptor(key: "favoriteLinks", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
-        let predicateOnTitle = NSPredicate(format: "favoriteLinks = %@", myFav)
+        let predicateOnTitle = NSPredicate(format: "favoriteLinks = %@", myLink)
         fetchRequest.predicate = predicateOnTitle
 
         if let favs = moc.executeFetchRequest(fetchRequestM, error: nil) as? [Favorite] {
             // get an array of the 'title' attributes
-            favNames = favs.map { $0.favoriteLinks }
+            favNames = favs.map { $0.favoriteTitle }
         }
         if contains(favNames, myFav){
             println("true")
@@ -54,7 +57,9 @@ class FeedTableViewCell: UITableViewCell {
             favorite.setImage(selectedFavorite, forState: .Normal)
             //save to core data
             let fav = SwiftCoreDataHelper.insertManagedObject(NSStringFromClass(Favorite), managedObjectConect: moc) as Favorite
-            fav.favoriteLinks = myFav as String
+            fav.favoriteLinks = myLink as String
+            fav.favoriteDesc = myDesc as String
+            fav.favoriteTitle = myFav as String
             println("saved \(fav.favoriteLinks)")
             SwiftCoreDataHelper.saveManagedObjectContext(moc)
         }

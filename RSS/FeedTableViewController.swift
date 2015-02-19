@@ -32,6 +32,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
     var currentFeedTitle = String()
     var currentFeedLink = String()
     var holdinglink = String()
+    var sidebarindex = Int() //index 0 add feeds; 1 favs ; 2 all feeds
 
 
     
@@ -65,6 +66,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             parser.shouldReportNamespacePrefixes = true
             parser.shouldResolveExternalEntities = true
             parser.parse()
+            tableView.reloadData()
             
         }else{
             var errorlink = holdinglink
@@ -78,14 +80,14 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             parser.shouldResolveExternalEntities = true
             parser.parse()
             
-            if feeds == []{
-                println("error")
-                let alertTwo = UIAlertController(title: "Alert!", message: "The feed you clicked on presented zero feeds. Please check your internet connectivity or try another feed.", preferredStyle: UIAlertControllerStyle.Alert)
-                alertTwo.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Cancel, handler: nil))
-                self.presentViewController(alertTwo, animated: true, completion: nil)
-                self.request(nil)
-
-            }
+//            if feeds == []{
+//                println("error")
+//                let alertTwo = UIAlertController(title: "Alert!", message: "The feed you clicked on presented zero feeds. Please check your internet connectivity or try another feed.", preferredStyle: UIAlertControllerStyle.Alert)
+//                alertTwo.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Cancel, handler: nil))
+//                self.presentViewController(alertTwo, animated: true, completion: nil)
+//                self.request(nil)
+//
+//            }
             
         }
         
@@ -163,7 +165,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         savedFeeds = [Feed]()
         feedNames = [String]()
         
-        //add "Add Feed" into feednames because its obviously not in there
+        //add "Add Feed" into feednames because its not in there
         feedNames.append("Add Feed")
         feedNames.append("Favorites")
         feedNames.append("All Feeds")
@@ -226,8 +228,49 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             
         }else if index == 1{
             println("Favorites")
+            sidebarindex = 1
+            
+            var favFeeds = [] as NSArray
+            let moc = SwiftCoreDataHelper.managedObjectContext()
+            let favFetch = NSFetchRequest(entityName: "Favorite")
+            if let favS = moc.executeFetchRequest(favFetch, error: nil) as? [Favorite]{
+                favFeeds = favS.map{ $0.favoriteTitle}
+            }
+            
+            feeds = [favFeeds]
+            
+            
+            
+            
         }else if index == 2{
+            sidebarindex = 2
             println("All Feeds")
+            println(feedNames)
+            var searchAll = []
+            
+            let moc = SwiftCoreDataHelper.managedObjectContext()
+            let feedFetch = NSFetchRequest(entityName: "Feed")
+            let sortDescriptor = NSSortDescriptor(key: "url", ascending: true)
+            feedFetch.sortDescriptors = [sortDescriptor]
+            
+            if let allS = moc.executeFetchRequest(feedFetch, error: nil) as? [Feed] {
+                // get an array of the 'title' attributes
+                searchAll = allS.map { $0.url }
+            }
+            println(searchAll)
+            if searchAll.count > 0{
+            for var index = 0; index < searchAll.count; ++index {
+                request(searchAll[index] as? String)
+                self.title = "All Feeds"
+            }
+            }else{
+            let alertThree = UIAlertController(title: "Alert!", message: "You have no feeds to present. Default feed will be loaded", preferredStyle: UIAlertControllerStyle.Alert)
+            alertThree.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Cancel, handler: nil))
+            self.presentViewController(alertThree, animated: true, completion: nil)
+            request(nil)
+            }
+
+ 
 
         }else if index >= 3{
             
@@ -263,20 +306,50 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete method implementation.
         // Return the number of rows in the section.
+        if sidebarindex == 3{
         return feeds.count
+        } else if sidebarindex == 2{
+        return feeds.count
+        } else if sidebarindex == 1{
+        
+            let moc = SwiftCoreDataHelper.managedObjectContext()
+            var favNames: [String] = []
+            let fetchRequestM = NSFetchRequest(entityName:"Favorite")
+            if let favs = moc.executeFetchRequest(fetchRequestM, error: nil) as? [Favorite] {
+                favNames = favs.map { $0.favoriteTitle }}
+            
+            if favNames.count != 0{
+                return favNames.count
+            }else{
+                return feeds.count
+            }
+            
+        } else{
+        return feeds.count
+        }
+        
+        
+        
     }
-    
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as FeedTableViewCell
         
+        if sidebarindex != 1{
         //Cell layout
         cell.detailTextLabel?.numberOfLines = 3
         cell.title.text = feeds.objectAtIndex(indexPath.row).objectForKey("title") as? String
         cell.subtext.text = feeds.objectAtIndex(indexPath.row).objectForKey("description") as? String
+        cell.link.text = feeds.objectAtIndex(indexPath.row).objectForKey("link") as? String
         cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
         cell.selectionStyle = UITableViewCellSelectionStyle.Blue
         cell.favorite.tag = indexPath.row
+        } else{
+        let moc = SwiftCoreDataHelper.managedObjectContext()
+        
+            
+            
+        }
         
         ////////////////////////////////////////////////////////////////////////////////////
 
@@ -303,7 +376,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         let fetchRequestTwo = NSFetchRequest(entityName:"Favorite")
         var favNames: [String] = []
         if let favs = moc.executeFetchRequest(fetchRequestTwo, error: nil) as? [Favorite] {
-            favNames = favs.map { $0.favoriteLinks }
+            favNames = favs.map { $0.favoriteTitle }
         }
         if contains(favNames, myFav){
           //  println("true")

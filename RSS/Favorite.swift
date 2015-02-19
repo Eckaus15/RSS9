@@ -13,5 +13,9 @@ import UIKit
 class Favorite: NSManagedObject {
 
     @NSManaged var favoriteLinks: String
+    @NSManaged var favoriteDesc: String
+    @NSManaged var favoriteTitle: String
+
+
 
 }
