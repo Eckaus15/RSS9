@@ -53,7 +53,7 @@ class SideBarTableViewController: UITableViewController {
         
         
         cell?.textLabel?.text = tableData[indexPath.row]
-        if indexPath.row < 3{
+        if indexPath.row < 2{
             cell?.textLabel?.font = UIFont.boldSystemFontOfSize(16.0)
         }
         
@@ -67,16 +67,17 @@ class SideBarTableViewController: UITableViewController {
     }
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        delegate?.sideBarControlDidSelectRow(indexPath)
         self.tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        delegate?.sideBarControlDidSelectRow(indexPath)
     }
     
     override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
-        if indexPath.row > 2{
+        if indexPath.row > 1{
             return true
         }else{
             return false
         }
+        
     }
      override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
         
@@ -84,7 +85,7 @@ class SideBarTableViewController: UITableViewController {
             
             let moc = SwiftCoreDataHelper.managedObjectContext()
             if let results = SwiftCoreDataHelper.fetchEntities(NSStringFromClass(Feed), withPredicate: nil, managedObjectContext: moc) as? [Feed]{
-            let logItemToDelete = results[indexPath.row - 3] as NSManagedObject
+            let logItemToDelete = results[indexPath.row - 2] as NSManagedObject
             moc.deleteObject(logItemToDelete)
             tableData.removeAtIndex(indexPath.row)
             tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)

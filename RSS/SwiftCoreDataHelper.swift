@@ -15,7 +15,7 @@ class SwiftCoreDataHelper: NSObject {
     
 
     class func databaseFilename()->NSString{
-        return "database29.sqlite";
+        return "database32.sqlite";
     }
     
     

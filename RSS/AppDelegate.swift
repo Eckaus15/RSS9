@@ -16,12 +16,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
-        UINavigationBar.appearance().barTintColor = UIColor(red: 0, green: 0, blue: 0.55, alpha: 1)
+        UINavigationBar.appearance().barTintColor = UIColor(red: 0.83, green: 0.38, blue: 0, alpha: 1)
         UINavigationBar.appearance().tintColor = UIColor.whiteColor()
         UINavigationBar.appearance().titleTextAttributes = [NSForegroundColorAttributeName : UIColor.whiteColor()]
         UIApplication.sharedApplication().setStatusBarStyle(UIStatusBarStyle.LightContent, animated: false)
         UIApplication.sharedApplication().statusBarStyle = .LightContent
-        
         
         return true
     }

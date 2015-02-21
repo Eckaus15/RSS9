@@ -13,54 +13,49 @@ var logItems = NSManagedObject()
 
 class FeedTableViewCell: UITableViewCell {
     
-    @IBOutlet weak var link: UILabel!
-    @IBOutlet weak var subtext: UILabel!
-    @IBOutlet weak var title: UILabel!
-    @IBOutlet weak var favorite: UIButton!
-    @IBAction func favoriteButton(sender: AnyObject) {
+    @IBOutlet weak var link: UILabel! //Link hidden on cell
+    @IBOutlet weak var subtext: UILabel! //description of article
+    @IBOutlet weak var title: UILabel! //title of article
+    @IBOutlet weak var favorite: UIButton! //favorite button
+    @IBAction func favoriteButton(sender: AnyObject) { //favoritebutton action
         let favorite: UIButton = sender as UIButton
         let selectedFavorite = UIImage(named: "GoldStar") as UIImage!
         let notFavorite = UIImage(named: "FavoriteStar") as UIImage!
-        //sets up core data into array
+        //sets up variables with the cell information
         var myFav = title.text!
         var myDesc = subtext.text!
         var myLink = link.text!
-        println(myFav)
+        //begin core data
         let moc = SwiftCoreDataHelper.managedObjectContext()
-        //print out core data
         var favNames: [String] = []
-        let fetchRequestM = NSFetchRequest(entityName:"Favorite")
-        let fetchRequest = NSFetchRequest(entityName:"Favorite")
+        let fetchRequestM = NSFetchRequest(entityName:"Favorite") //Fetch core data
+        let fetchRequest = NSFetchRequest(entityName:"Favorite") //Fetch core data
         let sortDescriptor = NSSortDescriptor(key: "favoriteLinks", ascending: true)
         fetchRequest.sortDescriptors = [sortDescriptor]
-        let predicateOnTitle = NSPredicate(format: "favoriteLinks = %@", myLink)
-        fetchRequest.predicate = predicateOnTitle
+        let predicateOnTitle = NSPredicate(format: "favoriteTitle = %@", myFav)
+        fetchRequest.predicate = predicateOnTitle //predicate to show only myLink in core data [Array of 1]
 
         if let favs = moc.executeFetchRequest(fetchRequestM, error: nil) as? [Favorite] {
             // get an array of the 'title' attributes
             favNames = favs.map { $0.favoriteTitle }
         }
-        if contains(favNames, myFav){
-            println("true")
+        if contains(favNames, myFav){ //already favorited
             favorite.setImage(notFavorite, forState: .Normal)
             if let fetchResults = moc.executeFetchRequest(fetchRequest, error: nil) as? [Favorite] {
             var logItems = fetchResults
             let logItemToDelete = logItems[0] as NSManagedObject
-            println("deleted \(logItemToDelete)")
             moc.deleteObject(logItemToDelete)
             SwiftCoreDataHelper.saveManagedObjectContext(moc)
                 
             }
             
-        }else{
-            println("False")
+        }else{//Not yet favorited
             favorite.setImage(selectedFavorite, forState: .Normal)
             //save to core data
             let fav = SwiftCoreDataHelper.insertManagedObject(NSStringFromClass(Favorite), managedObjectConect: moc) as Favorite
             fav.favoriteLinks = myLink as String
             fav.favoriteDesc = myDesc as String
             fav.favoriteTitle = myFav as String
-            println("saved \(fav.favoriteLinks)")
             SwiftCoreDataHelper.saveManagedObjectContext(moc)
         }
         

@@ -8,9 +8,6 @@
 /*
       Notes:
 
-         1 Actuallly delete unwanted feeds
-         2 Add Fav option
-         3 Add All feeds option
          4 Add number of how many unread articles are there
 
 */
@@ -19,46 +16,56 @@ import CoreData
 
 class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideBarDelegate {
     
-    var parser = NSXMLParser()
-    var feeds = NSMutableArray()
-    var elements = NSMutableDictionary()
-    var element = NSString()
-    var ftitle = NSMutableString()
-    var link = NSMutableString()
-    var fdescription = NSMutableString()
-    var sidebar = SideBar()
-    var savedFeeds = [Feed]()
-    var feedNames = [String]()
-    var currentFeedTitle = String()
-    var currentFeedLink = String()
-    var holdinglink = String()
+    var parser = NSXMLParser() //Parser
+    var feeds = NSMutableArray() //Feed list
+    var elements = NSMutableDictionary() //feed elements
+    var element = NSString() //feed elements1
+    var ftitle = NSMutableString() //feed title
+    var link = NSMutableString() //feed link
+    var fdescription = NSMutableString() //feed description
+    var sidebar = SideBar() //sidebar
+    var savedFeeds = [Feed]() //sidebar saved feeds (core)
+    var feedNames = [String]() //sidebar feed names
+    var currentFeedTitle = String() //current feed title
+    var currentFeedLink = String() //current feed link
+    var holdinglink = String() //error reverse title
     var sidebarindex = Int() //index 0 add feeds; 1 favs ; 2 all feeds
+
 
 
     
  
-    
+    func refresh(sender:AnyObject)
+    {
+        // Updating your data here...
+        
+        self.tableView.reloadData()
+        self.refreshControl?.endRefreshing()
+    }
     
     override func viewDidLoad() {
+        
+        //Refreshing enabled
+        self.refreshControl?.addTarget(self, action: "refresh:", forControlEvents: UIControlEvents.ValueChanged)
         super.viewDidLoad()
-
         request(nil)
         loadSavedFeeds()
+        
         
 
     }
     
-    func favoriteButton() {
-    
-    }
     
     func request(urlString:String?){
         
         
         if urlString == nil{
 
+            
+            //DEFAULT LINK
             let url = NSURL(string: "http://feeds.nytimes.com/nyt/rss/Technology")
             self.title = "New York Times Technology"
+            currentFeedLink = "http://feeds.nytimes.com/nyt/rss/Technology"
             feeds = []
             parser = NSXMLParser(contentsOfURL: url)!
             parser.delegate = self
@@ -69,6 +76,9 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             tableView.reloadData()
             
         }else{
+            
+            
+            //USER LINK
             var errorlink = holdinglink
             let url = NSURL(string: urlString!)
             self.title = currentFeedTitle
@@ -80,14 +90,13 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             parser.shouldResolveExternalEntities = true
             parser.parse()
             
-//            if feeds == []{
-//                println("error")
-//                let alertTwo = UIAlertController(title: "Alert!", message: "The feed you clicked on presented zero feeds. Please check your internet connectivity or try another feed.", preferredStyle: UIAlertControllerStyle.Alert)
-//                alertTwo.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Cancel, handler: nil))
-//                self.presentViewController(alertTwo, animated: true, completion: nil)
-//                self.request(nil)
-//
-//            }
+            if feeds == [] && self.currentFeedLink != "http://feeds.nytimes.com/nyt/rss/Technology"{
+                let alertTwo = UIAlertController(title: "Alert!", message: "The feed you clicked on presented zero feeds. Please check your internet connectivity or try another feed.", preferredStyle: UIAlertControllerStyle.Alert)
+                alertTwo.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Cancel, handler: nil))
+                self.presentViewController(alertTwo, animated: true, completion: nil)
+                self.request(nil)
+
+           }
             
         }
         
@@ -168,7 +177,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         //add "Add Feed" into feednames because its not in there
         feedNames.append("Add Feed")
         feedNames.append("Favorites")
-        feedNames.append("All Feeds")
+      //  feedNames.append("All Feeds")
         
         //contacts core data for feeds list
         let moc = SwiftCoreDataHelper.managedObjectContext()
@@ -190,8 +199,9 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
     
     func sideBarDidSelectButtonAtIndex(index: Int) {
         
-        //checks to see if it was the add feed button pressed
-        if index == 0{ //Add feed button
+        //checks to see what side bar button was pressed
+        
+        if index == 0{ //Add feed button was pressed
             let alert = UIAlertController(title: "Create A New Feed", message: "Enter the name and URL of the feed", preferredStyle: UIAlertControllerStyle.Alert)
             alert.addTextFieldWithConfigurationHandler({ (textField:UITextField!) -> Void in
                 textField.placeholder = "Feed Name"
@@ -215,7 +225,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
                     
                     SwiftCoreDataHelper.saveManagedObjectContext(moc)
                     self.loadSavedFeeds()
-                    self.title = feed.name
+                   // self.title = feed.name
                     self.request(feedURLTextField.text)
                     
                     
@@ -226,8 +236,8 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             
             self.presentViewController(alert, animated: true, completion: nil)
             
-        }else if index == 1{
-            println("Favorites")
+        }else if index == 1{ //Favorites was selected on side bar
+            self.title = "Favorites"
             sidebarindex = 1
             
             var favFeeds = [] as NSArray
@@ -236,49 +246,16 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             if let favS = moc.executeFetchRequest(favFetch, error: nil) as? [Favorite]{
                 favFeeds = favS.map{ $0.favoriteTitle}
             }
-            
-            feeds = [favFeeds]
-            
-            
-            
-            
-        }else if index == 2{
+            self.tableView.reloadData()
+
+
+        }else if index >= 2{
             sidebarindex = 2
-            println("All Feeds")
-            println(feedNames)
-            var searchAll = []
-            
-            let moc = SwiftCoreDataHelper.managedObjectContext()
-            let feedFetch = NSFetchRequest(entityName: "Feed")
-            let sortDescriptor = NSSortDescriptor(key: "url", ascending: true)
-            feedFetch.sortDescriptors = [sortDescriptor]
-            
-            if let allS = moc.executeFetchRequest(feedFetch, error: nil) as? [Feed] {
-                // get an array of the 'title' attributes
-                searchAll = allS.map { $0.url }
-            }
-            println(searchAll)
-            if searchAll.count > 0{
-            for var index = 0; index < searchAll.count; ++index {
-                request(searchAll[index] as? String)
-                self.title = "All Feeds"
-            }
-            }else{
-            let alertThree = UIAlertController(title: "Alert!", message: "You have no feeds to present. Default feed will be loaded", preferredStyle: UIAlertControllerStyle.Alert)
-            alertThree.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Cancel, handler: nil))
-            self.presentViewController(alertThree, animated: true, completion: nil)
-            request(nil)
-            }
-
- 
-
-        }else if index >= 3{
-            
             //Clearly was a feed pressed
 
             //call new MOC
             let moc = SwiftCoreDataHelper.managedObjectContext()
-            var selectedFeed = moc.existingObjectWithID(savedFeeds[index - 3].objectID, error: nil) as Feed
+            var selectedFeed = moc.existingObjectWithID(savedFeeds[index - 2].objectID, error: nil) as Feed
             
             //Set title
             currentFeedTitle = selectedFeed.name
@@ -288,6 +265,8 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             //set new url
 
             request(selectedFeed.url)
+            self.tableView.reloadData()
+
         }
         
 
@@ -321,7 +300,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             if favNames.count != 0{
                 return favNames.count
             }else{
-                return feeds.count
+                return 0
             }
             
         } else{
@@ -334,9 +313,12 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as FeedTableViewCell
-        
+        cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
+
         if sidebarindex != 1{
-        //Cell layout
+            
+            ////////////////// Marked for sidebar index that is not favorites //////////////////
+            
         cell.detailTextLabel?.numberOfLines = 3
         cell.title.text = feeds.objectAtIndex(indexPath.row).objectForKey("title") as? String
         cell.subtext.text = feeds.objectAtIndex(indexPath.row).objectForKey("description") as? String
@@ -344,51 +326,114 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
         cell.selectionStyle = UITableViewCellSelectionStyle.Blue
         cell.favorite.tag = indexPath.row
+            
+            
+            ////////////////// Returns checkmark if read //////////////////
+            
+            //sets up core data into array
+            var myTitle = feeds.objectAtIndex(indexPath.row).objectForKey("title") as String
+            let moc = SwiftCoreDataHelper.managedObjectContext()
+            let fetchRequest = NSFetchRequest(entityName:"Read")
+            var titleNames: [String] = []
+            //Checks to see if current feed is in array if it is return a check mark for Read
+            if let reads = moc.executeFetchRequest(fetchRequest, error: nil) as? [Read] {
+                // get an array of the 'title' attributes
+                titleNames = reads.map { $0.readName }
+            }
+            if (contains(titleNames, myTitle)){
+                cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+                //Already contained (Already Read)
+            }else{/*Not viewed yet*/}
+            
+            ////////////////// Returns goldstar if favorited //////////////////
+            let selectedFavorite = UIImage(named: "GoldStar") as UIImage!
+            let notFavorite = UIImage(named: "FavoriteStar") as UIImage!
+            let favURL: String = feeds[indexPath.row].objectForKey("link") as String
+            var myFav = myTitle
+            let fetchRequestTwo = NSFetchRequest(entityName:"Favorite")
+            var favNames: [String] = []
+            if let favs = moc.executeFetchRequest(fetchRequestTwo, error: nil) as? [Favorite] {
+                favNames = favs.map { $0.favoriteTitle }
+            }
+            if contains(favNames, myFav){
+                cell.favorite.setImage(selectedFavorite, forState: .Normal)
+            }else{
+                cell.favorite.setImage(notFavorite, forState: .Normal)
+            }
+            
+            
+            ////////////////// End (Return cell) //////////////////
+            
         } else{
-        let moc = SwiftCoreDataHelper.managedObjectContext()
-        
             
+            ////////////////// Marked for sidebar index that is favorites //////////////////
+
             
-        }
-        
-        ////////////////////////////////////////////////////////////////////////////////////
+        var favoriteNames: [String] = []
+        var favoriteLink: [String] = []
+        var favoriteDesc: [String] = []
 
-        //sets up core data into array
-        var myTitle = feeds.objectAtIndex(indexPath.row).objectForKey("title") as String
         let moc = SwiftCoreDataHelper.managedObjectContext()
-        let fetchRequest = NSFetchRequest(entityName:"Read")
-        var titleNames: [String] = []
-        //Checks to see if current feed is in array if it is return a check mark for Read
-        if let reads = moc.executeFetchRequest(fetchRequest, error: nil) as? [Read] {
-            // get an array of the 'title' attributes
-            titleNames = reads.map { $0.readName }
-        }
-        if (contains(titleNames, myTitle)){
-            cell.accessoryType = UITableViewCellAccessoryType.Checkmark
-            //Already contained (Already Read)
-        }else{/*Not viewed yet*/}
-        
-        ////////////////////////////////////////////////////////////////////////////////////
-        let selectedFavorite = UIImage(named: "GoldStar") as UIImage!
-        let notFavorite = UIImage(named: "FavoriteStar") as UIImage!
-        let favURL: String = feeds[indexPath.row].objectForKey("link") as String
-        var myFav = myTitle
-        let fetchRequestTwo = NSFetchRequest(entityName:"Favorite")
-        var favNames: [String] = []
-        if let favs = moc.executeFetchRequest(fetchRequestTwo, error: nil) as? [Favorite] {
-            favNames = favs.map { $0.favoriteTitle }
-        }
-        if contains(favNames, myFav){
-          //  println("true")
-            cell.favorite.setImage(selectedFavorite, forState: .Normal)
-        }else{
-          //  println("False")
-            cell.favorite.setImage(notFavorite, forState: .Normal)
+        let fetchRequestFav = NSFetchRequest(entityName: "Favorite")
+        let sortDescriptor = NSSortDescriptor(key: "favoriteTitle", ascending: true)
+        fetchRequestFav.sortDescriptors = [sortDescriptor]
+        if let favsLoad = moc.executeFetchRequest(fetchRequestFav, error: nil) as? [Favorite]{
+            favoriteNames = favsLoad.map { $0.favoriteTitle}}
+        if let favsLoad = moc.executeFetchRequest(fetchRequestFav, error: nil) as? [Favorite]{
+            favoriteLink = favsLoad.map { $0.favoriteLinks}}
+        if let favsLoad = moc.executeFetchRequest(fetchRequestFav, error: nil) as? [Favorite]{
+            favoriteDesc = favsLoad.map { $0.favoriteDesc}}
+            
+            if favoriteNames.count > 0{
+            
+            cell.detailTextLabel?.numberOfLines = 3
+            cell.title.text = favoriteNames[indexPath.row]
+            cell.link.text = favoriteLink[indexPath.row]
+            cell.subtext.text = favoriteDesc[indexPath.row]
+            cell.selectionStyle = UITableViewCellSelectionStyle.Blue
+            cell.favorite.tag = indexPath.row
+            
+            ////////////////// Returns checkmark if read //////////////////
+            
+            //sets up core data into array
+            var myTitle = favoriteNames[indexPath.row]
+            let fetchRequest = NSFetchRequest(entityName:"Read")
+            var titleNames: [String] = []
+            //Checks to see if current feed is in array if it is return a check mark for Read
+            if let reads = moc.executeFetchRequest(fetchRequest, error: nil) as? [Read] {
+                // get an array of the 'title' attributes
+                titleNames = reads.map { $0.readName }
+            }
+            if (contains(titleNames, myTitle)){
+                cell.accessoryType = UITableViewCellAccessoryType.Checkmark
+                //Already contained (Already Read)
+            }else{/*Not viewed yet*/}
+            
+                ////////////////// Returns goldstar if favorited //////////////////
+            let selectedFavorite = UIImage(named: "GoldStar") as UIImage!
+            let notFavorite = UIImage(named: "FavoriteStar") as UIImage!
+            let favURL = favoriteLink[indexPath.row]
+            var myFav = myTitle
+            let fetchRequestTwo = NSFetchRequest(entityName:"Favorite")
+            var favNames: [String] = []
+            if let favs = moc.executeFetchRequest(fetchRequestTwo, error: nil) as? [Favorite] {
+                favNames = favs.map { $0.favoriteTitle }
+            }
+            if contains(favNames, myFav){
+                cell.favorite.setImage(selectedFavorite, forState: .Normal)
+            }else{
+                cell.favorite.setImage(notFavorite, forState: .Normal)
+            }
+            
+            }else{
+                //Blank because 0 articles are favorited!
+            }
+            
+            ////////////////// End (Return cell) //////////////////
+            
+
         }
 
-        
-        ////////////////////////////////////////////////////////////////////////////////////
-        
         return cell
     }
     
@@ -398,16 +443,46 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         var accessoryType: UITableViewCellAccessoryType;()
 
         ///Gets url from feed
+        var fNames: [String] = []
+        var fLink: [String] = []
+        var fDesc: [String] = []
+        var clean: String
+        var mTitle: String
+        
+        
+        if sidebarindex != 1{
+            
         let selectedFURL: String = feeds[indexPath.row].objectForKey("link") as String
         let selectedTitle: String = feeds[indexPath.row].objectForKey("title") as String
-        var con = KINWebBrowserViewController()
-        
-        //Cleans URL
+            //Cleans URL
         var dirty = selectedFURL.stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
-        var clean = dirty!.stringByReplacingOccurrencesOfString(
+        clean = dirty!.stringByReplacingOccurrencesOfString(
             "%0A",
             withString: "",
             options: .RegularExpressionSearch)
+            
+        } else {
+            
+            let moc = SwiftCoreDataHelper.managedObjectContext()
+            let fetchRequestFav = NSFetchRequest(entityName: "Favorite")
+            let sortDescriptor = NSSortDescriptor(key: "favoriteTitle", ascending: true)
+            fetchRequestFav.sortDescriptors = [sortDescriptor]
+            if let favsLoad = moc.executeFetchRequest(fetchRequestFav, error: nil) as? [Favorite]{
+                fNames = favsLoad.map { $0.favoriteTitle}}
+            if let favsLoad = moc.executeFetchRequest(fetchRequestFav, error: nil) as? [Favorite]{
+                fLink = favsLoad.map { $0.favoriteLinks}}
+            //Cleans URL
+            var mTitle = fNames[indexPath.row]
+            var dirty = fLink[indexPath.row].stringByAddingPercentEscapesUsingEncoding(NSUTF8StringEncoding)
+            clean = dirty!.stringByReplacingOccurrencesOfString(
+                "%0A",
+                withString: "",
+                options: .RegularExpressionSearch)
+            
+        }
+        var con = KINWebBrowserViewController()
+        
+
         
         //Creates usuable url
         var URL = NSURL(string: clean)
@@ -418,16 +493,16 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         //coredata
         let moc = SwiftCoreDataHelper.managedObjectContext()
         let read = SwiftCoreDataHelper.insertManagedObject(NSStringFromClass(Read), managedObjectConect: moc) as Read
-        read.readName = selectedTitle
+        if sidebarindex != 1{
+
+        read.readName = feeds[indexPath.row].objectForKey("title") as String
+        } else{
+        read.readName = fNames[indexPath.row]
+        }
         SwiftCoreDataHelper.saveManagedObjectContext(moc)
         
         //reload table to show check mark (Refresh core data)
-        let thisfeed = currentFeedLink
-        if thisfeed == ""{
-            request(nil)
-        }else{
-            request(thisfeed)
-        }
+        self.tableView.reloadData()
 
 }
 
