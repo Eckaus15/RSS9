@@ -22,6 +22,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
     var element = NSString() //feed elements1
     var ftitle = NSMutableString() //feed title
     var link = NSMutableString() //feed link
+    var date = NSMutableString() //feed date
     var fdescription = NSMutableString() //feed description
     var sidebar = SideBar() //sidebar
     var savedFeeds = [Feed]() //sidebar saved feeds (core)
@@ -79,7 +80,6 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             
             
             //USER LINK
-            var errorlink = holdinglink
             let url = NSURL(string: urlString!)
             self.title = currentFeedTitle
             feeds = []
@@ -94,6 +94,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
                 let alertTwo = UIAlertController(title: "Alert!", message: "The feed you clicked on presented zero feeds. Please check your internet connectivity or try another feed.", preferredStyle: UIAlertControllerStyle.Alert)
                 alertTwo.addAction(UIAlertAction(title: "Ok", style: UIAlertActionStyle.Cancel, handler: nil))
                 self.presentViewController(alertTwo, animated: true, completion: nil)
+               // self.title = "New York Times Technology"
                 self.request(nil)
 
            }
@@ -117,7 +118,8 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             link = ""
             fdescription = NSMutableString.alloc()
             fdescription = ""
-
+            date = NSMutableString.alloc()
+            date = ""
 
             
 
@@ -142,6 +144,11 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             
         }
 
+            if date != ""{
+                elements.setObject(date, forKey: "pubDate")
+                
+        }
+
            
         feeds.addObject(elements)
 
@@ -156,6 +163,8 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             link.appendString(string)
         } else if element.isEqualToString("description"){
             fdescription.appendString(string)
+        } else if element.isEqualToString("pubDate"){
+            date.appendString(string)
         }
         
     
@@ -202,6 +211,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         //checks to see what side bar button was pressed
         
         if index == 0{ //Add feed button was pressed
+            sidebarindex = 2
             let alert = UIAlertController(title: "Create A New Feed", message: "Enter the name and URL of the feed", preferredStyle: UIAlertControllerStyle.Alert)
             alert.addTextFieldWithConfigurationHandler({ (textField:UITextField!) -> Void in
                 textField.placeholder = "Feed Name"
@@ -225,7 +235,8 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
                     
                     SwiftCoreDataHelper.saveManagedObjectContext(moc)
                     self.loadSavedFeeds()
-                   // self.title = feed.name
+                    self.currentFeedTitle = feedNameTextField.text
+                    self.currentFeedLink = feedURLTextField.text
                     self.request(feedURLTextField.text)
                     
                     
@@ -238,6 +249,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             
         }else if index == 1{ //Favorites was selected on side bar
             self.title = "Favorites"
+            loadSavedFeeds()
             sidebarindex = 1
             
             var favFeeds = [] as NSArray
@@ -251,8 +263,8 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
 
         }else if index >= 2{
             sidebarindex = 2
+            loadSavedFeeds()
             //Clearly was a feed pressed
-
             //call new MOC
             let moc = SwiftCoreDataHelper.managedObjectContext()
             var selectedFeed = moc.existingObjectWithID(savedFeeds[index - 2].objectID, error: nil) as Feed
@@ -323,6 +335,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         cell.title.text = feeds.objectAtIndex(indexPath.row).objectForKey("title") as? String
         cell.subtext.text = feeds.objectAtIndex(indexPath.row).objectForKey("description") as? String
         cell.link.text = feeds.objectAtIndex(indexPath.row).objectForKey("link") as? String
+        cell.date.text = feeds.objectAtIndex(indexPath.row).objectForKey("pubDate") as? String
         cell.accessoryType = UITableViewCellAccessoryType.DisclosureIndicator
         cell.selectionStyle = UITableViewCellSelectionStyle.Blue
         cell.favorite.tag = indexPath.row
@@ -372,17 +385,19 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         var favoriteNames: [String] = []
         var favoriteLink: [String] = []
         var favoriteDesc: [String] = []
+        var favoriteDate: [String] = []
 
         let moc = SwiftCoreDataHelper.managedObjectContext()
         let fetchRequestFav = NSFetchRequest(entityName: "Favorite")
         let sortDescriptor = NSSortDescriptor(key: "favoriteTitle", ascending: true)
         fetchRequestFav.sortDescriptors = [sortDescriptor]
         if let favsLoad = moc.executeFetchRequest(fetchRequestFav, error: nil) as? [Favorite]{
-            favoriteNames = favsLoad.map { $0.favoriteTitle}}
-        if let favsLoad = moc.executeFetchRequest(fetchRequestFav, error: nil) as? [Favorite]{
-            favoriteLink = favsLoad.map { $0.favoriteLinks}}
-        if let favsLoad = moc.executeFetchRequest(fetchRequestFav, error: nil) as? [Favorite]{
-            favoriteDesc = favsLoad.map { $0.favoriteDesc}}
+            favoriteNames = favsLoad.map { $0.favoriteTitle}
+            favoriteLink = favsLoad.map { $0.favoriteLinks}
+            favoriteDesc = favsLoad.map { $0.favoriteDesc}
+            favoriteDate = favsLoad.map { $0.favoriteDate}
+            }
+ 
             
             if favoriteNames.count > 0{
             
@@ -390,6 +405,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
             cell.title.text = favoriteNames[indexPath.row]
             cell.link.text = favoriteLink[indexPath.row]
             cell.subtext.text = favoriteDesc[indexPath.row]
+            cell.date.text = favoriteDate[indexPath.row]
             cell.selectionStyle = UITableViewCellSelectionStyle.Blue
             cell.favorite.tag = indexPath.row
             
@@ -446,6 +462,7 @@ class FeedTableViewController: UITableViewController, NSXMLParserDelegate, SideB
         var fNames: [String] = []
         var fLink: [String] = []
         var fDesc: [String] = []
+        var fDate: [String] = []
         var clean: String
         var mTitle: String
         

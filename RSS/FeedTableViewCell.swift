@@ -13,6 +13,7 @@ var logItems = NSManagedObject()
 
 class FeedTableViewCell: UITableViewCell {
     
+    @IBOutlet weak var date: UILabel! //date of article
     @IBOutlet weak var link: UILabel! //Link hidden on cell
     @IBOutlet weak var subtext: UILabel! //description of article
     @IBOutlet weak var title: UILabel! //title of article
@@ -25,6 +26,7 @@ class FeedTableViewCell: UITableViewCell {
         var myFav = title.text!
         var myDesc = subtext.text!
         var myLink = link.text!
+        var myDate = date.text!
         //begin core data
         let moc = SwiftCoreDataHelper.managedObjectContext()
         var favNames: [String] = []
@@ -56,6 +58,7 @@ class FeedTableViewCell: UITableViewCell {
             fav.favoriteLinks = myLink as String
             fav.favoriteDesc = myDesc as String
             fav.favoriteTitle = myFav as String
+            fav.favoriteDate = myDate as String
             SwiftCoreDataHelper.saveManagedObjectContext(moc)
         }
         

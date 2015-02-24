@@ -57,9 +57,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D9A3C9321A27B9680081D0F3"
-            BuildableName = "The Paradox.app"
+            BuildableName = "Paradox.temp_caseinsensitive_rename.temp_caseinsensitive_rename.app"
             BlueprintName = "RSSwag"
-            ReferencedContainer = "container:The Paradox.xcodeproj">
+            ReferencedContainer = "container:paradox.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </TestAction>
@@ -76,9 +76,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D9A3C9321A27B9680081D0F3"
-            BuildableName = "The Paradox.app"
+            BuildableName = "Paradox.temp_caseinsensitive_rename.temp_caseinsensitive_rename.app"
             BlueprintName = "RSSwag"
-            ReferencedContainer = "container:The Paradox.xcodeproj">
+            ReferencedContainer = "container:paradox.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <AdditionalOptions>

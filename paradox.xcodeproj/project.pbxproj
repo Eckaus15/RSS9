@@ -11,6 +11,7 @@
 		BF9C7DE11A93CEAE006D07CE /* RSS links.rtf in Resources */ = {isa = PBXBuildFile; fileRef = BF9C7DE01A93CEAE006D07CE /* RSS links.rtf */; };
 		D90647191A7D598600FF27E1 /* SideBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D90647181A7D598600FF27E1 /* SideBar.swift */; };
 		D906471B1A7D598E00FF27E1 /* SideBarTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D906471A1A7D598E00FF27E1 /* SideBarTableViewController.swift */; };
+		D919B2651A9A429500E85EFC /* Favorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D919B2641A9A429500E85EFC /* Favorite.swift */; };
 		D9A3C9391A27B9680081D0F3 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9A3C9381A27B9680081D0F3 /* AppDelegate.swift */; };
 		D9A3C93C1A27B9680081D0F3 /* RSS.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D9A3C93A1A27B9680081D0F3 /* RSS.xcdatamodeld */; };
 		D9A3C9431A27B9680081D0F3 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D9A3C9421A27B9680081D0F3 /* Images.xcassets */; };
@@ -22,7 +23,6 @@
 		D9DE05211A88524700B5D18F /* Read.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9DE05201A88524700B5D18F /* Read.swift */; };
 		D9DE055E1A8C3C4E00B5D18F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D9DE055D1A8C3C4E00B5D18F /* Main.storyboard */; };
 		D9DE05641A8E9ACB00B5D18F /* FeedTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9DE05631A8E9ACB00B5D18F /* FeedTableViewCell.swift */; };
-		D9DE05661A8E9D8B00B5D18F /* Favorite.swift in Sources */ = {isa = PBXBuildFile; fileRef = D9DE05651A8E9D8B00B5D18F /* Favorite.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,7 +43,8 @@
 		D90647181A7D598600FF27E1 /* SideBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideBar.swift; sourceTree = "<group>"; };
 		D906471A1A7D598E00FF27E1 /* SideBarTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideBarTableViewController.swift; sourceTree = "<group>"; };
 		D90647401A7EBA9B00FF27E1 /* RSS-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "RSS-Bridging-Header.h"; sourceTree = "<group>"; };
-		D9A3C9331A27B9680081D0F3 /* The Paradox.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "The Paradox.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D919B2641A9A429500E85EFC /* Favorite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Favorite.swift; sourceTree = "<group>"; };
+		D9A3C9331A27B9680081D0F3 /* paradox.temp_caseinsensitive_rename.temp_caseinsensitive_rename.temp_caseinsensitive_rename.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = paradox.temp_caseinsensitive_rename.temp_caseinsensitive_rename.temp_caseinsensitive_rename.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D9A3C9371A27B9680081D0F3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		D9A3C9381A27B9680081D0F3 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D9A3C93B1A27B9680081D0F3 /* RSS.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = RSS.xcdatamodel; sourceTree = "<group>"; };
@@ -59,7 +60,6 @@
 		D9DE05201A88524700B5D18F /* Read.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Read.swift; sourceTree = "<group>"; };
 		D9DE055D1A8C3C4E00B5D18F /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		D9DE05631A8E9ACB00B5D18F /* FeedTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeedTableViewCell.swift; sourceTree = "<group>"; };
-		D9DE05651A8E9D8B00B5D18F /* Favorite.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Favorite.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,7 +104,7 @@
 		D9A3C9341A27B9680081D0F3 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D9A3C9331A27B9680081D0F3 /* The Paradox.app */,
+				D9A3C9331A27B9680081D0F3 /* paradox.temp_caseinsensitive_rename.temp_caseinsensitive_rename.temp_caseinsensitive_rename.app */,
 				D9A3C94B1A27B9680081D0F3 /* RSSwagTests.xctest */,
 			);
 			name = Products;
@@ -157,8 +157,8 @@
 			isa = PBXGroup;
 			children = (
 				D9A3C93A1A27B9680081D0F3 /* RSS.xcdatamodeld */,
+				D919B2641A9A429500E85EFC /* Favorite.swift */,
 				D9C80FC41A7FFD7100955EBA /* SwiftCoreDataHelper.swift */,
-				D9DE05651A8E9D8B00B5D18F /* Favorite.swift */,
 				D9DE05201A88524700B5D18F /* Read.swift */,
 				D9DE051D1A882F7100B5D18F /* Feed.h */,
 				D9DE051E1A882F7100B5D18F /* Feed.m */,
@@ -202,7 +202,7 @@
 			);
 			name = RSSwag;
 			productName = RSS;
-			productReference = D9A3C9331A27B9680081D0F3 /* The Paradox.app */;
+			productReference = D9A3C9331A27B9680081D0F3 /* paradox.temp_caseinsensitive_rename.temp_caseinsensitive_rename.temp_caseinsensitive_rename.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D9A3C94A1A27B9680081D0F3 /* RSSwagTests */ = {
@@ -234,6 +234,7 @@
 				TargetAttributes = {
 					D9A3C9321A27B9680081D0F3 = {
 						CreatedOnToolsVersion = 6.1;
+						DevelopmentTeam = 2ZP9N54ZJR;
 					};
 					D9A3C94A1A27B9680081D0F3 = {
 						CreatedOnToolsVersion = 6.1;
@@ -241,7 +242,7 @@
 					};
 				};
 			};
-			buildConfigurationList = D9A3C92E1A27B9680081D0F3 /* Build configuration list for PBXProject "The Paradox" */;
+			buildConfigurationList = D9A3C92E1A27B9680081D0F3 /* Build configuration list for PBXProject "paradox" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -324,7 +325,7 @@
 				D9A3C95C1A27B9EE0081D0F3 /* FeedTableViewController.swift in Sources */,
 				D9DE051F1A882F7100B5D18F /* Feed.m in Sources */,
 				D90647191A7D598600FF27E1 /* SideBar.swift in Sources */,
-				D9DE05661A8E9D8B00B5D18F /* Favorite.swift in Sources */,
+				D919B2651A9A429500E85EFC /* Favorite.swift in Sources */,
 				D9C80FC51A7FFD7100955EBA /* SwiftCoreDataHelper.swift in Sources */,
 				D9A3C9391A27B9680081D0F3 /* AppDelegate.swift in Sources */,
 				D9DE05641A8E9ACB00B5D18F /* FeedTableViewCell.swift in Sources */,
@@ -445,9 +446,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = RSS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "The Paradox";
+				PRODUCT_NAME = paradox.temp_caseinsensitive_rename.temp_caseinsensitive_rename.temp_caseinsensitive_rename;
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "RSS/RSS-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = 1;
@@ -460,9 +465,13 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				INFOPLIST_FILE = RSS/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.1;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_NAME = "The Paradox";
+				PRODUCT_NAME = paradox.temp_caseinsensitive_rename.temp_caseinsensitive_rename.temp_caseinsensitive_rename;
+				PROVISIONING_PROFILE = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "RSS/RSS-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = 1;
 			};
@@ -505,7 +514,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		D9A3C92E1A27B9680081D0F3 /* Build configuration list for PBXProject "The Paradox" */ = {
+		D9A3C92E1A27B9680081D0F3 /* Build configuration list for PBXProject "paradox" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				D9A3C9531A27B9680081D0F3 /* Debug */,
